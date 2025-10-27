@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:verse_front/ChatScreen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load();
   runApp(const MyApp());
 }
 
