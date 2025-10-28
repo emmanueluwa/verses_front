@@ -24,6 +24,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
   askLLM() async {
     messages.insert(0, ChatMessage(text: inputController.text, createdAt: DateTime.now(), user: user));
+    setState(() {
+      messages;
+    });
+
 
     final response = await post(
       Uri.parse("https://api.openai.com/v1/chat/completions"),
