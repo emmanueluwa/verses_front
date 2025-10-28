@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -11,11 +12,19 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  var llmResponseText = "Response to query will be shown here...";
-
   String get openaiAPIKey => dotenv.env['OPENAI_API_KEY'] ?? "";
 
+  var llmResponseText = "Response to query will be shown here...";
+
+  List<ChatMessage> messages = [];
+
+  ChatUser user = ChatUser(id: "1", firstName: "fulo", lastName: "dev");
+  ChatUser llm = ChatUser(id: "2", firstName: "llm", lastName: "openai");
+
+
   askLLM() async {
+    messages.add(ChatMessage(text: inputController.text, createdAt: DateTime.now(), user: user));
+
     final response = await post(
       Uri.parse("https://api.openai.com/v1/chat/completions"),
       headers: {
@@ -54,7 +63,15 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(backgroundColor: Colors.amber),
       body: Column(
         children: [
-          Expanded(child: Center(child: Text(llmResponseText))),
+          Expanded(child: Center(child: DashChat(
+            currentUser: user,
+            onSend: (ChatMessage m) {
+              setState(() {
+                messages.insert(0, m);
+              });
+            },
+            messages: messages,
+          ),)),
           Card(
             color: Colors.white,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(30))),
