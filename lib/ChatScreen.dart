@@ -23,7 +23,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
 
   askLLM() async {
-    messages.add(ChatMessage(text: inputController.text, createdAt: DateTime.now(), user: user));
+    messages.insert(0, ChatMessage(text: inputController.text, createdAt: DateTime.now(), user: user));
 
     final response = await post(
       Uri.parse("https://api.openai.com/v1/chat/completions"),
@@ -47,6 +47,8 @@ class _ChatScreenState extends State<ChatScreen> {
       final jsonData = jsonDecode(response.body);
       llmResponseText = jsonData["choices"][0]["message"]["content"];
 
+      messages.insert(0, ChatMessage(text: llmResponseText, createdAt: DateTime.now(), user: llm));
+
       setState(() {
         llmResponseText;
       });
@@ -69,7 +71,7 @@ class _ChatScreenState extends State<ChatScreen> {
               setState(() {
                 messages.insert(0, m);
               });
-            },
+            }, readOnly: true,
             messages: messages,
           ),)),
           Card(
