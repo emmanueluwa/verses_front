@@ -1,8 +1,8 @@
-import 'dart:convert';
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+import 'ChatService.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -12,14 +12,14 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  String get openaiAPIKey => dotenv.env['OPENAI_API_KEY'] ?? "";
-
   var llmResponseText = "Response to query will be shown here...";
 
   List<ChatMessage> messages = [];
 
   ChatUser user = ChatUser(id: "1", firstName: "fulo", lastName: "dev");
   ChatUser llm = ChatUser(id: "2", firstName: "llm", lastName: "openai");
+
+  ChatService chatService = ChatService();
 
   askLLM() async {
     messages.insert(
@@ -34,43 +34,23 @@ class _ChatScreenState extends State<ChatScreen> {
       messages;
     });
 
-    final response = await post(
-      Uri.parse("https://api.openai.com/v1/chat/completions"),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $openaiAPIKey',
-      },
-
-      body: jsonEncode({
-        "model": "gpt-4o-mini",
-        "messages": [
-          {"role": "developer", "content": "You are a helpful assistant."},
-          {"role": "user", "content": inputController.text},
-        ],
-      }),
-    );
+    llmResponseText = await chatService.askLLM(inputController.text);
 
     inputController.text = "";
 
-    if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body);
-      llmResponseText = jsonData["choices"][0]["message"]["content"];
+    messages.insert(
+      0,
+      ChatMessage(
+        text: llmResponseText,
+        createdAt: DateTime.now(),
+        user: llm,
+      ),
+    );
 
-      messages.insert(
-        0,
-        ChatMessage(
-          text: llmResponseText,
-          createdAt: DateTime.now(),
-          user: llm,
-        ),
-      );
+    setState(() {
+      llmResponseText;
+    });
 
-      setState(() {
-        llmResponseText;
-      });
-    } else {
-      print("error occurred");
-    }
   }
 
   TextEditingController inputController = TextEditingController();
@@ -123,7 +103,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   onPressed: () {
                     askLLM();
                   },
-                  icon: Icon(Icons.send, color: Colors.black,),
+                  icon: Icon(Icons.send, color: Colors.black ,),
                 ),
               ],
             ),
