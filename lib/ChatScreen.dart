@@ -34,7 +34,7 @@ class _ChatScreenState extends State<ChatScreen> {
       messages;
     });
 
-    llmResponseText = await chatService.askLLM(inputController.text);
+    llmResponseText = await chatService.askBackend(inputController.text);
 
     inputController.text = "";
 
