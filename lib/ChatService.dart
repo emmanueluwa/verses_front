@@ -30,20 +30,25 @@ class ChatService {
       return "there is an error";
     }
   }
-  askBackend(String userInput) async {
-    final response = await post(
-      Uri.parse("http://10.0.2.2:8000/api/verses/query"),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({"query": userInput, "max_results": 0}),
-    );
 
-    if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body);
+  Future<Map<String, dynamic>?> askBackend(String userInput) async {
+    try {
+      final response = await post(
+        Uri.parse("${dotenv.env['API_URL']}/api/verses/query"),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({"query": userInput, "max_results": 0}),
+      );
 
-      print(jsonData["recommendations"][0]["tafsir"]["content"]);
-      return jsonData["recommendations"][0]["tafsir"]["content"];
-    } else {
-      return "invalid response";
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+
+        return jsonData;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print("Error: $e");
+      return null;
     }
   }
 }
