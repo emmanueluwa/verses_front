@@ -1,16 +1,39 @@
-# verse_front
+# Hidayah AI
 
-A new Flutter project.
+A Quranic verse finder powered by semantic search and LLM responses. Ask a question or describe what you're looking for, and Hidayah AI surfaces the most relevant verses with context.
+
+> **Backend repo:** [hidayah-backend](https://github.com/emmanueluwa/verses_v1)
+
+![App Screenshot](hidaya-app.png)
+
+## Features
+
+- Semantic search over Quran verses using OpenAI embeddings and Pinecone
+- LLM-generated answer summaries with verse recommendations
+- Clean chat interface built with Flutter
+- Bookmark verses for later reference
+
+## Tech Stack
+
+- **Frontend:** Flutter (Dart)
+- **Backend:** FastAPI (Python) — [hidayah-backend](https://github.com/emmanueluwa/verses_v1)
+- **Search:** Pinecone vector database
+- **AI:** OpenAI embeddings + LangChain
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+```bash
+# Backend
+uvicorn main:app --reload
 
-A few resources to get you started if this is your first Flutter project:
+# Frontend
+flutter pub get
+flutter run
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Environment Variables
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```env
+OPENAI_API_KEY=your_key
+API_URL=http://your-backend-url
+```
